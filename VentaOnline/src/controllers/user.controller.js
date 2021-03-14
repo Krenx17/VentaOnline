@@ -38,6 +38,7 @@ function register(req, res){
             {email: params.email}
         ]}).exec((err, UsersFind)=>{
             if (UsersFind && UsersFind.length>=1){
+                if (err) return res.status(500).send({mesaje:"Error en la petición"});
                 return res.status(500).send({mesaje: "El usuario o el correo ya existen"})
             }else{
                 userModel.usuario = params.usuario;
@@ -68,7 +69,21 @@ function editUser(req, res){
 
     if (idUser !=req.user.sub){
         if (req.user.rol === "ROL_ADMIN"){
-            console.log(req.user.usuario)
+            if (params.usuario && params.email){
+                return res.status(500).send({mesaje: "No posees los permisos necesarios para modificar esos datos"});
+            }else{
+                if (params.usuario) return res.status(500).send({mesaje: "No posees los permisos necesarios para modificar"});
+                if (params.email) return res.status(500).send({mesaje: "No posees los permisos necesarios para modificar el correo"});
+                if (params.rol && params.rol === "ROL_ADMIN"){
+                    User.findByIdAndUpdate(idUser, params, {new:true}, (err, updateUser)=>{
+                        if(err) return res.status(500).send({mesaje: "Error en la petición al actualizar"});
+                        if(!updateUser) return res.status(500).send({mesaje: "No se pudo actualizar el usuario"});
+                        return res.status(200).send({mesaje: "Se a actualizado el rol del usuario"});
+                    })
+                }else{
+                    return res.status(500).send({mesaje: "No existe ese rol"})
+                }
+            }
         }else{
             return res.status(500).send({mesaje: "No tienes los permisos necesarios"})
         }
@@ -137,7 +152,7 @@ function deleteUser(req, res){
     }else{
         User.findByIdAndDelete(idUser,(err, removedEmpresa)=>{
             if(err) return res.status(500).send({mesaje:"Error en la petición al eliminar"});
-            if(!removedEmpresa) return res.status(500).send({mesaje:"Error al eliminar la empresa"});
+            if(!removedEmpresa) return res.status(500).send({mesaje:"Error al eliminar el usuario"});
             return res.status(200).send({mesaje: "Se a logrado eliminar con exito"});
         })
     }

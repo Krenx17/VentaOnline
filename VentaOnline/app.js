@@ -17,11 +17,13 @@ app.use(cors());
 const user_Routes = require("./src/routes/user.routes");
 const category_Routes = require("./src/routes/category.routes");
 const product_Routes = require("./src/routes/product.routes");
+const shoppingCart_Routes = require("./src/routes/shoppingcart.routes");
 
 //Cargar Rutas 
 app.use("/user", user_Routes);
 app.use("/user", category_Routes);
 app.use("/user", product_Routes);
+app.use("/user", shoppingCart_Routes);
 
 //Exportar
 module.exports = app;

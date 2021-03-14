@@ -6,7 +6,8 @@ const ProductsSchema = Schema({
     stock: Number,
     precio: Number,
     ventas: Number,
-    categoria: {type: Schema.Types.ObjectId, ref: "Categories"}
+    categoria: {type: Schema.Types.ObjectId, ref: "categories"},
+    estado: String
 })
 
 module.exports = mongoose.model("products", ProductsSchema)

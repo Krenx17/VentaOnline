@@ -1,6 +1,8 @@
 "use strict"
 
+
 const Category = require("../models/category.model");
+const Product = require("../models/product.model")
 
 function createCategory(req, res){
     var categoryModel = Category();
@@ -55,10 +57,19 @@ function deleteCategory(req, res){
     var idCategory = req.params.idCategory;
 
     if (req.user.rol === "ROL_ADMIN"){
-        Category.findByIdAndDelete((idCategory), (err, categoryObtained)=>{
-            if (err) return res.status(500).send({mesaje:"Error en la petición"});
-            if (!categoryObtained) return res.status(500).send({mesaje: "No se pudo eliminar esa categoría"})
-            return res.status(200).send({mesaje: "Se a eliminado con exito la categoría"});
+        Category.findOne({categoria: "default"}, (err, obtainedCategory)=>{
+            Product.updateMany(
+                {categoria: idCategory}, 
+                {$set:{categoria: obtainedCategory}}, 
+                {multi: true},
+                function (err, result){
+                    if (err) return res.status(500).send({mesaje:"Error en la petición"});
+                    Category.findByIdAndDelete((idCategory), (err, categoryObtained)=>{
+                        if (err) return res.status(500).send({mesaje:"Error en la petición"});
+                        if (!categoryObtained) return res.status(500).send({mesaje: "No se pudo eliminar esa categoría"})
+                        return res.status(200).send({mesaje: "Se a eliminado con exito la categoría"});
+                    })
+                })
         })
     }else{
         return res.status(500).send({mesaje: "No posees los permisos suficientes"});

@@ -9,6 +9,7 @@ const bcrypt = require("bcrypt-nodejs");
 
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost:27017/ventasonline", {useNewUrlParser:true, useUnifiedTopology:true}).then(()=>{
+    console.log("-Bienvenido-")
     app.listen(3000,function (){
         var userModel = new User();
         var categoryModel = new Category();
@@ -18,7 +19,7 @@ mongoose.connect("mongodb://localhost:27017/ventasonline", {useNewUrlParser:true
         ]}).exec((err, UsersFind)=>{
             if(err) console.log("Error en la petición");
             if (UsersFind && UsersFind.length>=1){
-                console.log("Ya existe el usuario administrador");
+                console.log("Ya existe un administrador");
             }else {
                 userModel.usuario = "Admin";
                 userModel.password = "123456"
